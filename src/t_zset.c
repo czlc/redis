@@ -153,7 +153,7 @@ zskiplistNode *zslInsert(zskiplist *zsl, double score, sds ele) {
      * scores, reinserting the same element should never happen since the
      * caller of zslInsert() should test in the hash table if the element is
      * already inside or not. */
-    level = zslRandomLevel();
+    level = zslRandomLevel();	/* 因为高层和低层的产出概率是powerlaw-alike，所以高层的跨度必定大于低层,且跨度也是powerlaw-alike */
     if (level > zsl->level) {
         for (i = zsl->level; i < level; i++) {
             rank[i] = 0;
