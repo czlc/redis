@@ -33,6 +33,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+** hashmap，开链式
+** key可以是任意类型，只要hashmap的回调函数能够处理
+** value也可以是任意类型，只要hashmap的的回调函数能够处理
+** 支持增量rehash(提供了2个table，第二个table在rehash的时候使用)
+*/
 #include "fmacros.h"
 
 #include <stdio.h>

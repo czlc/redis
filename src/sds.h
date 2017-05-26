@@ -214,7 +214,6 @@ static inline void sdssetalloc(sds s, size_t newlen) {
     }
 }
 
-/* 对外head是隐藏的，由首字符推算 */
 sds sdsnewlen(const void *init, size_t initlen);
 sds sdsnew(const char *init);
 sds sdsempty(void);

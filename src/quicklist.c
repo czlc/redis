@@ -28,6 +28,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+** 结合双向列表和ziplist，前者在首尾插入方便，后者结构紧凑，有点类似stl中的deque
+*/
 #include <string.h> /* for memcpy */
 #include "quicklist.h"
 #include "zmalloc.h"

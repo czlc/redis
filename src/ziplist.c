@@ -179,6 +179,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+ /*
+ ** 无序，整体数据块，虽然叫做list，但是插入，删除，合并都没有享受list的优势，需要移动
+ ** 内存，唯一的好处就是紧凑
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -739,7 +743,7 @@ unsigned char *__ziplistDelete(unsigned char *zl, unsigned char *p, unsigned int
     return zl;
 }
 
-/* Insert item at "p". */
+/* Insert item at "p"(前插). */
 unsigned char *__ziplistInsert(unsigned char *zl, unsigned char *p, unsigned char *s, unsigned int slen) {
     size_t curlen = intrev32ifbe(ZIPLIST_BYTES(zl)), reqlen;
     unsigned int prevlensize, prevlen = 0;

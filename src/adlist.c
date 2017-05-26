@@ -28,7 +28,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
+/*
+** 普通双向列表
+*/
 #include <stdlib.h>
 #include "adlist.h"
 #include "zmalloc.h"

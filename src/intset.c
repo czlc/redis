@@ -28,6 +28,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+** 有序(二分查找)数组(entry大小一致)，尽量紧凑(int16, int32, int64)，如果当前entry存放不下，整体扩容(所有entry)
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

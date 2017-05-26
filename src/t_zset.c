@@ -63,6 +63,10 @@
  * Skiplist implementation of the low level API
  *----------------------------------------------------------------------------*/
 
+/*
+** 链表，通过level指针快速查找，因为高层和低层的产出概率是powerlaw-alike，所以高层的跨
+** 度必定大于低层,且跨度也是powerlaw-alike
+*/
 int zslLexValueGteMin(sds value, zlexrangespec *spec);
 int zslLexValueLteMax(sds value, zlexrangespec *spec);
 

@@ -30,6 +30,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+** 接口对外隐藏head，由首字符推算，尽量节省内存，即使头部几个字节
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
