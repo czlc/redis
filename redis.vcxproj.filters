@@ -118,4 +118,7 @@
     <ClCompile Include="src\zipmap.c" />
     <ClCompile Include="src\zmalloc.c" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="note.txt" />
+  </ItemGroup>
 </Project>

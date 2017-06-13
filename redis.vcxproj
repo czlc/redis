@@ -128,6 +128,9 @@
     <ClCompile Include="src\zipmap.c" />
     <ClCompile Include="src\zmalloc.c" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="note.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9E4F50F4-8DA2-472F-8781-3AFE16F3351B}</ProjectGuid>
     <RootNamespace>redis</RootNamespace>
