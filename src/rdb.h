@@ -69,8 +69,9 @@
 #define RDB_ENC_INT32 2       /* 32 bit signed integer */
 #define RDB_ENC_LZF 3         /* string compressed with FASTLZ */
 
-/* Dup object types to RDB object types. Only reason is readability (are we
- * dealing with RDB types or with in-memory object types?). */
+/* Map object types to RDB object types. Macros starting with OBJ_ are for
+ * memory storage and may change. Instead RDB types must be fixed because
+ * we store them on disk. */
 #define RDB_TYPE_STRING 0
 #define RDB_TYPE_LIST   1
 #define RDB_TYPE_SET    2
@@ -78,6 +79,8 @@
 #define RDB_TYPE_HASH   4
 #define RDB_TYPE_ZSET_2 5 /* ZSET version 2 with doubles stored in binary. */
 #define RDB_TYPE_MODULE 6
+#define RDB_TYPE_MODULE_2 7 /* Module value with annotations for parsing without
+                               the generating module being loaded. */
 /* NOTE: WHEN ADDING NEW RDB TYPE, UPDATE rdbIsObjectType() BELOW */
 
 /* Object types for encoded objects. */
@@ -87,10 +90,11 @@
 #define RDB_TYPE_ZSET_ZIPLIST  12
 #define RDB_TYPE_HASH_ZIPLIST  13
 #define RDB_TYPE_LIST_QUICKLIST 14
+#define RDB_TYPE_STREAM_LISTPACKS 15
 /* NOTE: WHEN ADDING NEW RDB TYPE, UPDATE rdbIsObjectType() BELOW */
 
 /* Test if a type is an object type. */
-#define rdbIsObjectType(t) ((t >= 0 && t <= 6) || (t >= 9 && t <= 14))
+#define rdbIsObjectType(t) ((t >= 0 && t <= 7) || (t >= 9 && t <= 15))
 
 /* Special RDB opcodes (saved/loaded with rdbSaveType/rdbLoadType). */
 #define RDB_OPCODE_AUX        250
@@ -99,6 +103,14 @@
 #define RDB_OPCODE_EXPIRETIME 253
 #define RDB_OPCODE_SELECTDB   254
 #define RDB_OPCODE_EOF        255
+
+/* Module serialized values sub opcodes */
+#define RDB_MODULE_OPCODE_EOF   0   /* End of module value. */
+#define RDB_MODULE_OPCODE_SINT  1   /* Signed integer. */
+#define RDB_MODULE_OPCODE_UINT  2   /* Unsigned integer. */
+#define RDB_MODULE_OPCODE_FLOAT 3   /* Float. */
+#define RDB_MODULE_OPCODE_DOUBLE 4  /* Double. */
+#define RDB_MODULE_OPCODE_STRING 5  /* String. */
 
 /* rdbLoad...() functions flags. */
 #define RDB_LOAD_NONE   0
@@ -129,7 +141,7 @@ robj *rdbLoadObject(int type, rio *rdb);
 void backgroundSaveDoneHandler(int exitcode, int bysignal);
 int rdbSaveKeyValuePair(rio *rdb, robj *key, robj *val, long long expiretime, long long now);
 robj *rdbLoadStringObject(rio *rdb);
-int rdbSaveStringObject(rio *rdb, robj *obj);
+ssize_t rdbSaveStringObject(rio *rdb, robj *obj);
 ssize_t rdbSaveRawString(rio *rdb, unsigned char *s, size_t len);
 void *rdbGenericLoadStringObject(rio *rdb, int flags, size_t *lenptr);
 int rdbSaveBinaryDoubleValue(rio *rdb, double val);
@@ -137,5 +149,6 @@ int rdbLoadBinaryDoubleValue(rio *rdb, double *val);
 int rdbSaveBinaryFloatValue(rio *rdb, float val);
 int rdbLoadBinaryFloatValue(rio *rdb, float *val);
 int rdbLoadRio(rio *rdb, rdbSaveInfo *rsi);
+rdbSaveInfo *rdbPopulateSaveInfo(rdbSaveInfo *rsi);
 
 #endif

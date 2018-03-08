@@ -38,14 +38,20 @@
 #define AE_OK 0
 #define AE_ERR -1
 
-#define AE_NONE 0
-#define AE_READABLE 1
-#define AE_WRITABLE 2
+#define AE_NONE 0       /* No events registered. */
+#define AE_READABLE 1   /* Fire when descriptor is readable. */
+#define AE_WRITABLE 2   /* Fire when descriptor is writable. */
+#define AE_BARRIER 4    /* With WRITABLE, never fire the event if the
+                           READABLE event already fired in the same event
+                           loop iteration. Useful when you want to persist
+                           things to disk before sending replies, and want
+                           to do that in a group fashion. */
 
 #define AE_FILE_EVENTS 1
 #define AE_TIME_EVENTS 2
 #define AE_ALL_EVENTS (AE_FILE_EVENTS|AE_TIME_EVENTS)
 #define AE_DONT_WAIT 4
+#define AE_CALL_AFTER_SLEEP 8
 
 #define AE_NOMORE -1
 #define AE_DELETED_EVENT_ID -1
@@ -63,7 +69,7 @@ typedef void aeBeforeSleepProc(struct aeEventLoop *eventLoop);
 
 /* File event structure */
 typedef struct aeFileEvent {
-    int mask; /* one of AE_(READABLE|WRITABLE) */
+    int mask; /* one of AE_(READABLE|WRITABLE|BARRIER) */
     aeFileProc *rfileProc;
     aeFileProc *wfileProc;
     void *clientData;
