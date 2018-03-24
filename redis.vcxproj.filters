@@ -1,6 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <ClInclude Include="src\stream.h" />
+    <ClInclude Include="src\testhelp.h" />
+    <ClInclude Include="src\util.h" />
+    <ClInclude Include="src\version.h" />
+    <ClInclude Include="src\ziplist.h" />
+    <ClInclude Include="src\zipmap.h" />
     <ClInclude Include="src\zmalloc.h" />
     <ClInclude Include="src\adlist.h" />
     <ClInclude Include="src\ae.h" />
@@ -21,6 +27,8 @@
     <ClInclude Include="src\help.h" />
     <ClInclude Include="src\intset.h" />
     <ClInclude Include="src\latency.h" />
+    <ClInclude Include="src\listpack.h" />
+    <ClInclude Include="src\listpack_malloc.h" />
     <ClInclude Include="src\lzf.h" />
     <ClInclude Include="src\lzfP.h" />
     <ClInclude Include="src\pqsort.h" />
@@ -39,11 +47,6 @@
     <ClInclude Include="src\slowlog.h" />
     <ClInclude Include="src\solarisfixes.h" />
     <ClInclude Include="src\sparkline.h" />
-    <ClInclude Include="src\testhelp.h" />
-    <ClInclude Include="src\util.h" />
-    <ClInclude Include="src\version.h" />
-    <ClInclude Include="src\ziplist.h" />
-    <ClInclude Include="src\zipmap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\adlist.c" />
@@ -76,6 +79,7 @@
     <ClCompile Include="src\intset.c" />
     <ClCompile Include="src\latency.c" />
     <ClCompile Include="src\lazyfree.c" />
+    <ClCompile Include="src\listpack.c" />
     <ClCompile Include="src\lzf_c.c" />
     <ClCompile Include="src\lzf_d.c" />
     <ClCompile Include="src\memtest.c" />
@@ -111,14 +115,12 @@
     <ClCompile Include="src\t_hash.c" />
     <ClCompile Include="src\t_list.c" />
     <ClCompile Include="src\t_set.c" />
+    <ClCompile Include="src\t_stream.c" />
     <ClCompile Include="src\t_string.c" />
     <ClCompile Include="src\t_zset.c" />
     <ClCompile Include="src\util.c" />
     <ClCompile Include="src\ziplist.c" />
     <ClCompile Include="src\zipmap.c" />
     <ClCompile Include="src\zmalloc.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="note.txt" />
   </ItemGroup>
 </Project>

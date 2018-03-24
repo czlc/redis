@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -30,6 +30,8 @@
     <ClInclude Include="src\help.h" />
     <ClInclude Include="src\intset.h" />
     <ClInclude Include="src\latency.h" />
+    <ClInclude Include="src\listpack.h" />
+    <ClInclude Include="src\listpack_malloc.h" />
     <ClInclude Include="src\lzf.h" />
     <ClInclude Include="src\lzfP.h" />
     <ClInclude Include="src\pqsort.h" />
@@ -48,6 +50,7 @@
     <ClInclude Include="src\slowlog.h" />
     <ClInclude Include="src\solarisfixes.h" />
     <ClInclude Include="src\sparkline.h" />
+    <ClInclude Include="src\stream.h" />
     <ClInclude Include="src\testhelp.h" />
     <ClInclude Include="src\util.h" />
     <ClInclude Include="src\version.h" />
@@ -86,6 +89,7 @@
     <ClCompile Include="src\intset.c" />
     <ClCompile Include="src\latency.c" />
     <ClCompile Include="src\lazyfree.c" />
+    <ClCompile Include="src\listpack.c" />
     <ClCompile Include="src\lzf_c.c" />
     <ClCompile Include="src\lzf_d.c" />
     <ClCompile Include="src\memtest.c" />
@@ -121,15 +125,13 @@
     <ClCompile Include="src\t_hash.c" />
     <ClCompile Include="src\t_list.c" />
     <ClCompile Include="src\t_set.c" />
+    <ClCompile Include="src\t_stream.c" />
     <ClCompile Include="src\t_string.c" />
     <ClCompile Include="src\t_zset.c" />
     <ClCompile Include="src\util.c" />
     <ClCompile Include="src\ziplist.c" />
     <ClCompile Include="src\zipmap.c" />
     <ClCompile Include="src\zmalloc.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="note.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9E4F50F4-8DA2-472F-8781-3AFE16F3351B}</ProjectGuid>
@@ -139,13 +141,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
