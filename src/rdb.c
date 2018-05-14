@@ -772,13 +772,20 @@ ssize_t rdbSaveObject(rio *rdb, robj *o) {
             dictIterator *di = dictGetIterator(set);
             dictEntry *de;
 
-            if ((n = rdbSaveLen(rdb,dictSize(set))) == -1) return -1;
+            if ((n = rdbSaveLen(rdb,dictSize(set))) == -1) {
+                dictReleaseIterator(di);
+                return -1;
+            }
             nwritten += n;
 
             while((de = dictNext(di)) != NULL) {
                 sds ele = dictGetKey(de);
                 if ((n = rdbSaveRawString(rdb,(unsigned char*)ele,sdslen(ele)))
-                    == -1) return -1;
+                    == -1)
+                {
+                    dictReleaseIterator(di);
+                    return -1;
+                }
                 nwritten += n;
             }
             dictReleaseIterator(di);
@@ -838,7 +845,10 @@ ssize_t rdbSaveObject(rio *rdb, robj *o) {
             dictIterator *di = dictGetIterator(o->ptr);
             dictEntry *de;
 
-            if ((n = rdbSaveLen(rdb,dictSize((dict*)o->ptr))) == -1) return -1;
+            if ((n = rdbSaveLen(rdb,dictSize((dict*)o->ptr))) == -1) {
+                dictReleaseIterator(di);
+                return -1;
+            }
             nwritten += n;
 
             while((de = dictNext(di)) != NULL) {
@@ -846,10 +856,18 @@ ssize_t rdbSaveObject(rio *rdb, robj *o) {
                 sds value = dictGetVal(de);
 
                 if ((n = rdbSaveRawString(rdb,(unsigned char*)field,
-                        sdslen(field))) == -1) return -1;
+                        sdslen(field))) == -1)
+                {
+                    dictReleaseIterator(di);
+                    return -1;
+                }
                 nwritten += n;
                 if ((n = rdbSaveRawString(rdb,(unsigned char*)value,
-                        sdslen(value))) == -1) return -1;
+                        sdslen(value))) == -1)
+                {
+                    dictReleaseIterator(di);
+                    return -1;
+                }
                 nwritten += n;
             }
             dictReleaseIterator(di);
@@ -1088,7 +1106,6 @@ int rdbSaveRio(rio *rdb, int *error, int flags, rdbSaveInfo *rsi) {
         dict *d = db->dict;
         if (dictSize(d) == 0) continue;
         di = dictGetSafeIterator(d);
-        if (!di) return C_ERR;
 
         /* Write the SELECT DB opcode */
         if (rdbSaveType(rdb,RDB_OPCODE_SELECTDB) == -1) goto werr;
@@ -1130,8 +1147,8 @@ int rdbSaveRio(rio *rdb, int *error, int flags, rdbSaveInfo *rsi) {
             }
         }
         dictReleaseIterator(di);
+        di = NULL; /* So that we don't release it again on error. */
     }
-    di = NULL; /* So that we don't release it again on error. */
 
     /* If we are storing the replication information on disk, persist
      * the script cache as well: on successful PSYNC after a restart, we need
@@ -1145,6 +1162,7 @@ int rdbSaveRio(rio *rdb, int *error, int flags, rdbSaveInfo *rsi) {
                 goto werr;
         }
         dictReleaseIterator(di);
+        di = NULL; /* So that we don't release it again on error. */
     }
 
     /* EOF opcode */
