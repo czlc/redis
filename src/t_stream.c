@@ -981,8 +981,10 @@ int string2ull(const char *s, unsigned long long *value) {
         return 1;
     }
     errno = 0;
-    *value = strtoull(s,NULL,10);
-    if (errno == EINVAL || errno == ERANGE) return 0; /* strtoull() failed. */
+    char *endptr = NULL;
+    *value = strtoull(s,&endptr,10);
+    if (errno == EINVAL || errno == ERANGE || !(*s != '\0' && *endptr == '\0'))
+        return 0; /* strtoull() failed. */
     return 1; /* Conversion done! */
 }
 
@@ -1061,19 +1063,15 @@ void xaddCommand(client *c) {
             maxlen_arg_idx = i;
         } else {
             /* If we are here is a syntax error or a valid ID. */
-            if (streamParseIDOrReply(NULL,c->argv[i],&id,0) == C_OK) {
-                id_given = 1;
-                break;
-            } else {
-                addReply(c,shared.syntaxerr);
-                return;
-            }
+            if (streamParseIDOrReply(c,c->argv[i],&id,0) != C_OK) return;
+            id_given = 1;
+            break;
         }
     }
     int field_pos = i+1;
 
     /* Check arity. */
-    if ((c->argc - field_pos) < 2 || (c->argc-field_pos % 2) == 1) {
+    if ((c->argc - field_pos) < 2 || ((c->argc-field_pos) % 2) == 1) {
         addReplyError(c,"wrong number of arguments for XADD");
         return;
     }
@@ -1272,7 +1270,7 @@ void xreadCommand(client *c) {
         int id_idx = i - streams_arg - streams_count;
         robj *key = c->argv[i-streams_count];
         robj *o;
-        streamCG *group;
+        streamCG *group = NULL;
 
         /* If a group was specified, than we need to be sure that the
          * key and group actually exist. */
@@ -1285,7 +1283,7 @@ void xreadCommand(client *c) {
                 addReplyErrorFormat(c, "-NOGROUP No such key '%s' or consumer "
                                        "group '%s' in XREADGROUP with GROUP "
                                        "option",
-                                    key->ptr,groupname->ptr);
+                                    (char*)key->ptr,(char*)groupname->ptr);
                 goto cleanup;
             }
             groups[id_idx] = group;
@@ -1549,7 +1547,7 @@ NULL
         {
             addReplyErrorFormat(c, "-NOGROUP No such consumer group '%s' "
                                    "for key name '%s'",
-                                   grpname, c->argv[2]->ptr);
+                                   (char*)grpname, (char*)c->argv[2]->ptr);
             return;
         }
     }
@@ -1595,7 +1593,7 @@ NULL
  * acknowledged, that is, the IDs we were actually able to resolve in the PEL.
  */
 void xackCommand(client *c) {
-    streamCG *group;
+    streamCG *group = NULL;
     robj *o = lookupKeyRead(c->db,c->argv[1]);
     if (o) {
         if (checkType(c,o,OBJ_STREAM)) return; /* Type error. */
@@ -1675,7 +1673,7 @@ void xpendingCommand(client *c) {
     {
         addReplyErrorFormat(c, "-NOGROUP No such key '%s' or consumer "
                                "group '%s'",
-                               key->ptr,groupname->ptr);
+                               (char*)key->ptr,(char*)groupname->ptr);
         return;
     }
 
@@ -1834,7 +1832,7 @@ void xpendingCommand(client *c) {
  * successfully claimed, so that the caller is able to understand
  * what messages it is now in charge of. */
 void xclaimCommand(client *c) {
-    streamCG *group;
+    streamCG *group = NULL;
     robj *o = lookupKeyRead(c->db,c->argv[1]);
     long long minidle; /* Minimum idle time argument. */
     long long retrycount = -1;   /* -1 means RETRYCOUNT option not given. */
@@ -1851,8 +1849,8 @@ void xclaimCommand(client *c) {
      * is mandatory. */
     if (o == NULL || group == NULL) {
         addReplyErrorFormat(c,"-NOGROUP No such key '%s' or "
-                              "consumer group '%s'", c->argv[1]->ptr,
-                              c->argv[2]->ptr);
+                              "consumer group '%s'", (char*)c->argv[1]->ptr,
+                              (char*)c->argv[2]->ptr);
         return;
     }
 
@@ -2137,7 +2135,7 @@ NULL
         if (cg == NULL) {
             addReplyErrorFormat(c, "-NOGROUP No such consumer group '%s' "
                                    "for key name '%s'",
-                                   c->argv[3]->ptr, key->ptr);
+                                   (char*)c->argv[3]->ptr, (char*)key->ptr);
             return;
         }
 
